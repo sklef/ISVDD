@@ -129,7 +129,7 @@ class ISVDD:
         self.radius = (support_vector_norm +
                        self.centre_norm -
                        dot_product_with_centre)
-        self.threshold = self.centre_norm - self.radius
+        self.threshold = (self.centre_norm - self.radius).ravel()
 
     def fit(self, X, Z):
         '''
@@ -174,4 +174,4 @@ class ISVDD:
         """
         test_norm = np.diag(self.features_kernel(X))
         scalar_product = self._scalar_product_with_center(X)
-        return test_norm.ravel()[0, :] + self.threshold - 2*scalar_product
+        return -test_norm.ravel() - self.threshold + 2*scalar_product
