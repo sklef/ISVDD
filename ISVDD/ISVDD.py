@@ -34,6 +34,27 @@ class ISVDD:
                  privileged_kernel=linear_kernel,
                  privileged_regularization=0.1,
                  tol=0.001, max_iter=100, silent=True):
+        '''
+        This class implements SVDD+ algorithm,
+        imitates sklearn interface
+        Right now it supports only linear kernel        
+        Parameters:
+        - nu: float
+            The upper bound on the fraction of margin errors and the fraction
+            of support vectors.
+        - features_kernel: function, optional (default=linear_kernel)
+            The kernel function for the feature space.
+        - privileged_kernel: function, optional (default=linear_kernel)
+            The kernel function for the privileged space.
+        - privileged_regularization: float, optional (default=0.1)
+            Regularization parameter for the privileged space.
+        - tol: float, optional (default=0.001)
+            Tolerance for convergence of the optimization problem.
+        - max_iter: int, optional (default=100)
+            Maximum number of iterations for the optimization problem.
+        - silent: bool, optional (default=True)
+            If True, suppress optimization progress output.
+        '''
         # Setting initial parameters
         self.nu = nu
         self.tol = tol
@@ -125,7 +146,7 @@ class ISVDD:
         '''
         problem = self._prepare_problem(X, Z)
         options = {}
-        options['show_progress'] = self.silent
+        options['show_progress'] = not self.silent
         options['maxiters'] = self.max_iter
         options['abstol'] = self.tol
         problem['options'] = options
@@ -153,4 +174,4 @@ class ISVDD:
         """
         test_norm = np.diag(self.features_kernel(X))
         scalar_product = self._scalar_product_with_center(X)
-        return test_norm.ravel() + self.threshold - 2*scalar_product
+        return test_norm.ravel()[0, :] + self.threshold - 2*scalar_product
